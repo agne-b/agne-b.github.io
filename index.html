@@ -136,91 +136,55 @@
     
 
     <!-- Skills Section -->
-    <section id="skills-kanban" class="skills-kanban section"></section>
-    <div class="container">
-      <div class="section-title"></div>
+<section id="skills-kanban" class="skills-kanban section">
+  <div class="container">
+
+    <div class="section-title">
       <h2>Kompetencijų pažangos modulis</h2>
       <p>Mano inžinerinių įgūdžių progresas, lygis ir patirtis</p>
     </div>
 
-    <div class="user-level-card">
-      <h3>Rangas: Profesionalas | Lygis: 4</h3>
-      <p>Patirties taškai: <strong>320 XP</strong></p>
-      <div class="progress-container">
-        <div class="progress-bar">85%</div>
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <div class="p-3 border rounded">
+          <p class="mb-1"><strong>Patirties taškai:</strong> <span id="totalXp">0</span> XP</p>
+          <p class="mb-1"><strong>Lygis:</strong> <span id="userLevel">1</span></p>
+          <p class="mb-2"><strong>Rangas:</strong> <span id="userRank">Pradedantysis</span></p>
+          <div class="progress" style="height: 20px;">
+            <div id="xpProgressBar" class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="skills-stats">
-      <div class="stat-item">
-        <span class="stat-num">7</span>
-        <span class="stat-text">Iš viso įgūdžių</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-num">4</span>
-        <span class="stat-text">Atlikta</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-num">57%</span>
-        <span class="stat-text">Atlikta procentais</span>
+      <div class="col-md-6 mb-3">
+        <div class="p-3 border rounded">
+          <p class="mb-1"><strong>Iš viso įgūdžių:</strong> <span id="totalSkillsCount">0</span></p>
+          <p class="mb-1"><strong>Atlikti įgūdžiai:</strong> <span id="completedSkillsCount">0</span></p>
+          <p class="mb-0"><strong>Atliktų įgūdžių procentas:</strong> <span id="completedPercentage">0</span>%</p>
+        </div>
       </div>
     </div>
 
     <div class="kanban-board">
+
       <div class="kanban-column">
         <h3>Planuojama</h3>
-        <div class="skill-card plan">
-          <h4>Skriptinis programavimas</h4>
-          <p>Būsena: Planuojama</p>
-          <span class="xp-tag">50 XP</span>
-        </div>
-
-        <div class="skill-card plan">
-          <h4>Atsinaujinantys energijos šaltiniai</h4>
-          <p>Būsena: Planuojama</p>
-          <span class="xp-tag">40 XP</span>
-        </div>
+        <div class="kanban-cards" id="plannedSkills"></div>
       </div>
 
       <div class="kanban-column">
         <h3>Mokomasi</h3>
-
-        <div class="skill-card learn">
-          <h4>AutoCAD Elektrotechninis projektavimas</h4>
-          <p>Būsena: Mokomasi</p>
-          <span class="xp-tag">60 XP</span>
-        </div>
-
-        <div class="skill-card learn">
-          <h4>Mikrokontroleriai ir autonominė automatika</h4>
-          <p>Būsena: Mokomasi</p>
-          <span class="xp-tag">40 XP</span>
-        </div>
+        <div class="kanban-cards" id="learningSkills"></div>
       </div>
 
       <div class="kanban-column">
         <h3>Atlikta</h3>
-
-        <div class="skill-card done">
-          <h4>Elektrinių grandinių analizė</h4>
-          <p>Būsena: Atlikta</p>
-          <span class="xp-tag">50 XP</span>
-        </div>
-
-        <div class="skill-card done">
-          <h4>Elektriniai matavimai ir diagnostika</h4>
-          <p>Būsena: Atlikta</p>
-          <span class="xp-tag">40 XP</span>
-        </div>
-
-        <div class="skill-card done">
-          <h4>Darbuotojų sauga ir elektrosauga</h4>
-          <p>Būsena: Atlikta</p>
-          <span class="xp-tag">40 XP</span>
-        </div>
+        <div class="kanban-cards" id="completedSkills"></div>
       </div>
-    </div>
 
+    </div>
+  </div>
+</section>
      
 
     <!-- Resume Section -->
@@ -403,7 +367,7 @@
         <div class="col-lg-6 mb-4">
           <h4>Projekto apžvalga "YouTube"</h4>
           <div class="ratio ratio-16x9">
-            <iframe src="https://www.youtube.com/watch?v=BoUVIhtqjAw" title="YouTube video vaizdo įrašas" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/BoUVIhtqjAw" title="YouTube video vaizdo įrašas" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
         </div>
 
