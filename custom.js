@@ -215,3 +215,204 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+const skills = [
+    {
+        name: "Skriptinis programavimas",
+        status: "Planuojama",
+        xp: 50
+    },
+    {
+        name: "Atsinaujinantys energijos šaltiniai",
+        status: "Planuojama",
+        xp: 40
+    },
+    {
+        name: "AutoCAD Elektrotechninis projektavimas",
+        status: "Mokomasi",
+        xp: 60
+    },
+    {
+        name: "Mikrokontroleriai ir autonominė automatika",
+        status: "Mokomasi",
+        xp: 40
+    },
+    {
+        name: "Elektrinių grandinių analizė",
+        status: "Atlikta",
+        xp: 50
+    },
+    {
+        name: "Elektriniai matavimai ir diagnostika",
+        status: "Atlikta",
+        xp: 40
+    },
+    {
+        name: "Darbuotojų sauga ir elektrosauga",
+        status: "Atlikta",
+        xp: 40
+    }
+];
+
+const STORAGE_KEY = "agne_skills_kanban_v1";
+
+function saveSkillsToStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(skills));
+}
+
+function loadSkillsFromStorage() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+
+    try {
+        const parsed = JSON.parse(saved);
+        if (!Array.isArray(parsed)) return;
+
+        skills.forEach(function (skill) {
+            const matched = parsed.find(item => item.name === skill.name);
+            if (matched && ["Planuojama", "Mokomasi", "Atlikta"].includes(matched.status)) {
+                skill.status = matched.status;
+            }
+        });
+    } catch (e) {
+        console.error("Nepavyko nuskaityti duomenų iš localStorage:", e);
+    }
+}
+
+function getLevelInfo(xp) {
+    if (xp >= 300) {
+        return { level: 4, rank: "Profesionalas", minXp: 300, maxXp: 300 };
+    } else if (xp >= 150) {
+        return { level: 3, rank: "Specialistas", minXp: 150, maxXp: 300 };
+    } else if (xp >= 50) {
+        return { level: 2, rank: "Praktikantas", minXp: 50, maxXp: 150 };
+    } else {
+        return { level: 1, rank: "Pradedantysis", minXp: 0, maxXp: 50 };
+    }
+}
+
+function updateXpLevelRank() {
+    const totalXp = skills
+        .filter(skill => skill.status === "Atlikta")
+        .reduce((sum, skill) => sum + skill.xp, 0);
+
+    const info = getLevelInfo(totalXp);
+
+    const totalXpEl = document.getElementById("totalXp");
+    const levelEl = document.getElementById("userLevel");
+    const rankEl = document.getElementById("userRank");
+
+    if (totalXpEl) totalXpEl.textContent = totalXp;
+    if (levelEl) levelEl.textContent = info.level;
+    if (rankEl) rankEl.textContent = info.rank;
+
+    updateProgressBar(totalXp, info);
+    return { totalXp, info };
+}
+
+function updateProgressBar(totalXp, info) {
+    const progressBarEl = document.getElementById("xpProgressBar");
+    if (!progressBarEl) return;
+
+    let percent = 0;
+
+    if (info.level === 4) {
+        percent = 100;
+    } else {
+        const levelSpan = info.maxXp - info.minXp;
+        const earnedInLevel = totalXp - info.minXp;
+        percent = Math.round((earnedInLevel / levelSpan) * 100);
+        percent = Math.max(0, Math.min(100, percent));
+    }
+
+    progressBarEl.style.width = percent + "%";
+    progressBarEl.textContent = percent + "%";
+}
+
+function updateSkillsStatistics() {
+    const totalCount = skills.length;
+    const completedCount = skills.filter(skill => skill.status === "Atlikta").length;
+    const percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+    const totalEl = document.getElementById("totalSkillsCount");
+    const completedEl = document.getElementById("completedSkillsCount");
+    const percentageEl = document.getElementById("completedPercentage");
+
+    if (totalEl) totalEl.textContent = totalCount;
+    if (completedEl) completedEl.textContent = completedCount;
+    if (percentageEl) percentageEl.textContent = percentage;
+}
+
+function updateSkillsModule() {
+    renderSkills();
+    updateXpLevelRank();
+    updateSkillsStatistics();
+}
+
+updateSkillsModule();
+
+function renderSkills() {
+
+    const plannedContainer = document.getElementById("plannedSkills");
+    const learningContainer = document.getElementById("learningSkills");
+    const completedContainer = document.getElementById("completedSkills");
+
+    plannedContainer.innerHTML = "";
+    learningContainer.innerHTML = "";
+    completedContainer.innerHTML = "";
+
+    skills.forEach(function(skill) {
+
+        const card = document.createElement("div");
+        card.classList.add("skill-card");
+
+        if (skill.status === "Planuojama") {
+            card.classList.add("plan");
+            plannedContainer.appendChild(card);
+        } 
+        else if (skill.status === "Mokomasi") {
+            card.classList.add("learn");
+            learningContainer.appendChild(card);
+        } 
+        else if (skill.status === "Atlikta") {
+            card.classList.add("done");
+            completedContainer.appendChild(card);
+        }
+
+        card.innerHTML = `
+            <h4>${skill.name}</h4>
+            <p>Būsena: ${skill.status}</p>
+            <span class="xp-tag">${skill.xp} XP</span>
+
+            <select class="status-select">
+                <option value="Planuojama"
+                    ${skill.status === "Planuojama" ? "selected" : ""}>
+                    Planuojama
+                </option>
+
+                <option value="Mokomasi"
+                    ${skill.status === "Mokomasi" ? "selected" : ""}>
+                    Mokomasi
+                </option>
+
+                <option value="Atlikta"
+                    ${skill.status === "Atlikta" ? "selected" : ""}>
+                    Atlikta
+                </option>
+            </select>
+        `;
+        const statusSelect = card.querySelector(".status-select");
+
+        statusSelect.addEventListener("change", function() {
+
+            skill.status = this.value;
+
+            updateSkillsModule();
+            saveSkillsToStorage();
+
+        });
+
+    });
+}
+
+loadSkillsFromStorage();
+updateSkillsModule();
