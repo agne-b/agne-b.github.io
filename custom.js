@@ -416,3 +416,157 @@ function renderSkills() {
 
 loadSkillsFromStorage();
 updateSkillsModule();
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const formos = document.querySelectorAll("#contact form, #contactForm");
+
+  formos.forEach(form => {
+
+    const laukai = form.querySelectorAll(
+      "input:not([type=submit]):not([type=button]), textarea"
+    );
+
+    function tikrintiLauka(laukas) {
+
+      const reiksme = laukas.value.trim();
+      const tipas = laukas.type;
+      const vardas = laukas.name;
+      const id = laukas.id;
+
+      let klaida = "";
+
+      // Tuščio lauko tikrinimas
+      if (reiksme === "") {
+        klaida = "Šį lauką būtina užpildyti.";
+      }
+
+      // Vardo ir pavardės tikrinimas
+      else if (
+        id === "vardas" ||
+        id === "pavarde" ||
+        vardas === "name"
+      ) {
+        if (!/^[\p{L}\s'-]{2,}$/u.test(reiksme)) {
+          klaida = "Įveskite teisingą vardą arba pavardę.";
+        }
+      }
+
+      // El. pašto tikrinimas
+      else if (tipas === "email") {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+        if (!emailRegex.test(reiksme)) {
+          klaida = "Neteisingas el. pašto formatas.";
+        }
+      }
+
+      // Telefono numerio tikrinimas
+      else if (id === "telefonas") {
+        const telefonas = reiksme.replace(/[\s()-]/g, "");
+
+        if (!/^(?:\+370|370|8)\d{8}$/.test(telefonas)) {
+          klaida = "Įveskite teisingą telefono numerį.";
+        }
+      }
+
+      // Adreso tikrinimas
+      else if (id === "adresas") {
+        if (reiksme.length < 5) {
+          klaida = "Adresas per trumpas.";
+        }
+      }
+
+      // Įvertinimų tikrinimas (1–10)
+      else if (laukas.classList.contains("rating-input")) {
+        const skaicius = Number(reiksme);
+
+        if (
+          !Number.isInteger(skaicius) ||
+          skaicius < 1 ||
+          skaicius > 10
+        ) {
+          klaida = "Įvertinimas turi būti nuo 1 iki 10.";
+        }
+      }
+
+      // Temos tikrinimas
+      else if (vardas === "subject") {
+        if (reiksme.length < 3) {
+          klaida = "Tema turi būti bent 3 simbolių.";
+        }
+      }
+
+      // Žinutės tikrinimas
+      else if (vardas === "message") {
+        if (reiksme.length < 10) {
+          klaida = "Žinutė turi būti bent 10 simbolių.";
+        }
+      }
+
+      let pranesimas = laukas.parentElement.querySelector(
+        ".field-feedback"
+      );
+
+      if (!pranesimas) {
+        pranesimas = document.createElement("small");
+        pranesimas.className = "field-feedback";
+        laukas.insertAdjacentElement("afterend", pranesimas);
+      }
+
+      if (klaida !== "") {
+        laukas.classList.remove("is-valid");
+        laukas.classList.add("is-invalid");
+
+        pranesimas.textContent = klaida;
+        pranesimas.className = "field-feedback invalid";
+
+        return false;
+      } else {
+        laukas.classList.remove("is-invalid");
+        laukas.classList.add("is-valid");
+
+        pranesimas.textContent = "Įvesta teisingai!";
+        pranesimas.className = "field-feedback valid";
+
+        return true;
+      }
+    }
+
+    // Tikrinimas iškart vedant duomenis
+    laukai.forEach(laukas => {
+
+      laukas.addEventListener("input", function () {
+        tikrintiLauka(laukas);
+      });
+
+      laukas.addEventListener("blur", function () {
+        tikrintiLauka(laukas);
+      });
+
+    });
+
+    // Tikrinimas prieš siunčiant formą
+    form.addEventListener("submit", function (event) {
+
+      let formaTeisinga = true;
+
+      laukai.forEach(laukas => {
+        if (!tikrintiLauka(laukas)) {
+          formaTeisinga = false;
+        }
+      });
+
+      if (!formaTeisinga) {
+        event.preventDefault();
+
+        form.querySelector(".is-invalid").focus();
+      }
+
+    });
+
+  });
+
+});
